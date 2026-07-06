@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IT Compass - Temukan Karir IT-mu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <div class="container">
+        <div class="card" id="app">
+
+            <!-- ===== HEADER ===== -->
+            <div class="card-header">
+                <div class="logo">
+                    <div class="logo-icon">🧭</div>
+                    <div>
+                        <h1>IT <span>Compass</span></h1>
+                        <div class="sub">Temukan Jalur Karir IT-mu</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">🌙</button>
+                    <button class="btn btn-secondary btn-sm hidden" id="logoutBtn" onclick="logout()">🚪 Logout</button>
+                    <div class="avatar" id="avatarDisplay">👤</div>
+                </div>
+            </div>
+
+            <!-- ===== LOGIN ===== -->
+            <div class="auth-page active" id="loginPage">
+                <div class="auth-title">
+                    <span class="emoji-big">👋</span>
+                    <h2>Selamat Datang!</h2>
+                    <p>Masuk untuk menemukan karir IT terbaikmu</p>
+                </div>
+                <form id="loginForm" onsubmit="login(event)">
+                    <div class="form-group">
+                        <label>📧 Email</label>
+                        <input type="email" id="loginEmail" placeholder="contoh@email.com" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+                </form>
+                <div class="auth-switch">
+                    Belum punya akun? <a onclick="showRegister()">Daftar Sekarang ✨</a>
+                </div>
+            </div>
+
+            <!-- ===== REGISTER ===== -->
+            <div class="auth-page" id="registerPage">
+                <div class="auth-title">
+                    <span class="emoji-big">✨</span>
+                    <h2>Buat Akun Baru</h2>
+                    <p>Isi data dirimu untuk memulai</p>
+                </div>
+                <form id="registerForm" onsubmit="register(event)">
+                    <div class="form-group">
+                        <label>👤 Nama Lengkap</label>
+                        <input type="text" id="regName" placeholder="Nama kamu" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🎓 NIM</label>
+                        <input type="text" id="regNim" placeholder="Contoh: 20240101001" required />
+                    </div>
+                    <div class="form-group">
+                        <label>📧 Email</label>
+                        <input type="email" id="regEmail" placeholder="contoh@email.com" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="regPassword" placeholder="Minimal 6 karakter" required minlength="6" />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Daftar Sekarang</button>
+                </form>
+                <div class="auth-switch">
+                    Sudah punya akun? <a onclick="showLogin()">Masuk</a>
+                </div>
+            </div>
+
+            <!-- ===== DASHBOARD ===== -->
+            <div class="dashboard-page" id="dashboardPage">
+
+                <div class="greeting-card">
+                    <h2>☀️ Halo, <span id="userNameDisplay">User</span>!</h2>
+                    <p>Mari temukan jalur karir IT terbaik untukmu 🚀</p>
+                    <span class="badge">📊 Dashboard</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="label">📚 IPK Kumulatif</div>
+                        <div class="value primary" id="ipkDisplay">0.00</div>
+                        <div class="trend up" id="ipkTrend">↑ 0.0%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">📖 SKS Lulus</div>
+                        <div class="value green" id="sksDisplay">0 SKS</div>
+                        <div class="trend up" id="sksTrend">↑ 0 SKS</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">📋 MK Utama</div>
+                        <div class="value orange" id="mkUtamaDisplay">0 MK</div>
+                        <div class="trend" id="mkTrend">✅ Selesai</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="label">🎯 Analisis Terakhir</div>
+                        <div class="value pink" id="lastAnalysis">-</div>
+                        <div class="trend" id="lastAnalysisDate">Belum ada</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+
+                    <div class="card" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
+                        <div class="chart-title">📈 Perkembangan IPK Semester</div>
+                        <div class="semester-chart" id="semesterChart"></div>
+                    </div>
+
+                    <div class="card" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
+                        <div class="chart-title">🎯 Kecenderungan Bidang IT</div>
+                        <div class="donut-container" id="donutContainer"></div>
+                    </div>
+
+                    <div class="card full" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+                            <div class="chart-title" style="margin-bottom:0;">📜 Riwayat Analisis</div>
+                            <button class="btn btn-secondary btn-sm" onclick="showHistory()">Lihat Semua →</button>
+                        </div>
+                        <div class="history-list" id="historyPreview"></div>
+                    </div>
+
+                    <div class="card full" style="padding:0;border:none;">
+                        <div class="recommend-card" id="recommendCard">
+                            <span class="tag">⭐ Rekomendasi Utama</span>
+                            <h3 id="recommendTitle">Belum Ada Analisis</h3>
+                            <p id="recommendDesc">Silakan input nilai dan analisis karir terlebih dahulu</p>
+                            <div class="detail-row" id="recommendDetails"></div>
+                        </div>
+                    </div>
+
+                    <div class="full" style="display:flex;gap:12px;flex-wrap:wrap;">
+                        <button class="btn btn-primary" onclick="processResult()" style="flex:1;padding:14px 20px;font-size:16px;">
+                            🚀 Analisis Karir
+                        </button>
+                        <button class="btn btn-secondary" onclick="goToInput()" style="padding:14px 24px;font-size:16px;">
+                            📝 Input Nilai
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== INPUT NILAI ===== -->
+            <div class="dashboard-page" id="inputPage" style="display:none;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
+                    <h2 style="font-family:'Poppins',sans-serif;color:#2D4A6A;">📝 Input Nilai Mata Kuliah</h2>
+                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
+                </div>
+                <div id="semesterContainer"></div>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+                    <button class="btn btn-primary" onclick="processResult()" style="flex:1;padding:14px 20px;font-size:16px;">
+                        🚀 Analisis Karir
+                    </button>
+                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
+                </div>
+            </div>
+
+            <!-- ===== RESULT ===== -->
+            <div class="dashboard-page" id="resultPage" style="display:none;">
+                <div id="resultContent"></div>
+                <div class="flex flex-wrap gap-10" style="margin-top:20px;">
+                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
+                    <button class="btn btn-success" onclick="saveHistory()">💾 Simpan History</button>
+                </div>
+            </div>
+
+            <!-- ===== HISTORY ===== -->
+            <div class="dashboard-page" id="historyPage" style="display:none;">
+                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+                    <h2 style="font-family:'Poppins',sans-serif;color:#2D4A6A;">📜 Riwayat Analisis</h2>
+                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
+                </div>
+                <div id="historyList"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
