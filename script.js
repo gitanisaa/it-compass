@@ -1,8 +1,8 @@
 // ================================================================
 // SUPABASE CONFIG - GANTI PAKE PUNYA KAMU!
 // ================================================================
-const SUPABASE_URL = https://cpbducjughurzorqiertz.supabase.co;
-const SUPABASE_ANON_KEY = sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_;
+const SUPABASE_URL = 'https://cpbducjughurzorqiertz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_';
 
 // ================================================================
 // INISIALISASI SUPABASE
