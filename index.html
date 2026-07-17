@@ -25,8 +25,42 @@
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">🌙</button>
-                    <button class="btn btn-secondary btn-sm hidden" id="logoutBtn" onclick="logout()">🚪 Logout</button>
-                    <div class="avatar" id="avatarDisplay">👤</div>
+                    
+                    <!-- ===== DROPDOWN PROFILE ===== -->
+                    <div class="profile-dropdown-container">
+                        <div class="avatar" id="avatarDisplay" onclick="toggleDropdown(event)">👤</div>
+                        <div class="dropdown-menu" id="profileDropdown">
+                            <div class="dropdown-header">
+                                <h4>👤 Profil Saya</h4>
+                            </div>
+                            <ul class="dropdown-info-list">
+                                <li>
+                                    <span class="info-label">Nama</span>
+                                    <span class="info-value" id="dropName">-</span>
+                                </li>
+                                <li>
+                                    <span class="info-label">NIM</span>
+                                    <span class="info-value" id="dropNim">-</span>
+                                </li>
+                                <li>
+                                    <span class="info-label">Jurusan</span>
+                                    <span class="info-value" id="dropJurusan">-</span>
+                                </li>
+                                <li>
+                                    <span class="info-label">Universitas</span>
+                                    <span class="info-value" id="dropUniv">-</span>
+                                </li>
+                                <li>
+                                    <span class="info-label">Email</span>
+                                    <span class="info-value" id="dropEmail">-</span>
+                                </li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-logout-btn" onclick="logout()">
+                                🚪 Logout
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -84,9 +118,36 @@
                 </div>
             </div>
 
+            <!-- ===== SETUP PROFILE ===== -->
+            <div class="auth-page" id="setupProfilePage">
+                <div class="auth-title">
+                    <span class="emoji-big">📋</span>
+                    <h2>Lengkapi Profilmu</h2>
+                    <p>Isi data dirimu untuk personalisasi pengalaman</p>
+                </div>
+                <form id="setupProfileForm" onsubmit="saveProfileSetup(event)">
+                    <div class="form-group">
+                        <label>👤 Nama Lengkap</label>
+                        <input type="text" id="setupName" placeholder="Nama kamu" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🎓 NIM</label>
+                        <input type="text" id="setupNim" placeholder="Contoh: 20240101001" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🏛️ Jurusan</label>
+                        <input type="text" id="setupJurusan" placeholder="Contoh: Teknik Informatika" required />
+                    </div>
+                    <div class="form-group">
+                        <label>🏫 Universitas</label>
+                        <input type="text" id="setupUniv" placeholder="Contoh: Universitas Indonesia" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">✅ Selesai</button>
+                </form>
+            </div>
+
             <!-- ===== DASHBOARD ===== -->
             <div class="dashboard-page" id="dashboardPage">
-
                 <div class="greeting-card">
                     <h2>☀️ Halo, <span id="userNameDisplay">User</span>!</h2>
                     <p>Mari temukan jalur karir IT terbaik untukmu 🚀</p>
@@ -117,26 +178,25 @@
                 </div>
 
                 <div class="dashboard-grid">
-
-                    <div class="card" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
+                    <div class="card-inner">
                         <div class="chart-title">📈 Perkembangan IPK Semester</div>
                         <div class="semester-chart" id="semesterChart"></div>
                     </div>
 
-                    <div class="card" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
+                    <div class="card-inner">
                         <div class="chart-title">🎯 Kecenderungan Bidang IT</div>
                         <div class="donut-container" id="donutContainer"></div>
                     </div>
 
-                    <div class="card full" style="padding:20px;border:1px solid #D6E6F2;border-radius:16px;">
-                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
+                    <div class="card-inner full">
+                        <div class="history-header">
                             <div class="chart-title" style="margin-bottom:0;">📜 Riwayat Analisis</div>
                             <button class="btn btn-secondary btn-sm" onclick="showHistory()">Lihat Semua →</button>
                         </div>
                         <div class="history-list" id="historyPreview"></div>
                     </div>
 
-                    <div class="card full" style="padding:0;border:none;">
+                    <div class="card-inner full" style="padding:0;border:none;">
                         <div class="recommend-card" id="recommendCard">
                             <span class="tag">⭐ Rekomendasi Utama</span>
                             <h3 id="recommendTitle">Belum Ada Analisis</h3>
@@ -145,11 +205,11 @@
                         </div>
                     </div>
 
-                    <div class="full" style="display:flex;gap:12px;flex-wrap:wrap;">
-                        <button class="btn btn-primary" onclick="processResult()" style="flex:1;padding:14px 20px;font-size:16px;">
+                    <div class="full action-buttons">
+                        <button class="btn btn-primary" onclick="processResult()">
                             🚀 Analisis Karir
                         </button>
-                        <button class="btn btn-secondary" onclick="goToInput()" style="padding:14px 24px;font-size:16px;">
+                        <button class="btn btn-secondary" onclick="goToInput()">
                             📝 Input Nilai
                         </button>
                     </div>
@@ -158,13 +218,13 @@
 
             <!-- ===== INPUT NILAI ===== -->
             <div class="dashboard-page" id="inputPage" style="display:none;">
-                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:20px;">
-                    <h2 style="font-family:'Poppins',sans-serif;color:#2D4A6A;">📝 Input Nilai Mata Kuliah</h2>
+                <div class="input-header">
+                    <h2>📝 Input Nilai Mata Kuliah</h2>
                     <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
                 </div>
                 <div id="semesterContainer"></div>
-                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
-                    <button class="btn btn-primary" onclick="processResult()" style="flex:1;padding:14px 20px;font-size:16px;">
+                <div class="input-actions">
+                    <button class="btn btn-primary" onclick="processResult()">
                         🚀 Analisis Karir
                     </button>
                     <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
@@ -174,7 +234,7 @@
             <!-- ===== RESULT ===== -->
             <div class="dashboard-page" id="resultPage" style="display:none;">
                 <div id="resultContent"></div>
-                <div class="flex flex-wrap gap-10" style="margin-top:20px;">
+                <div class="result-actions">
                     <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
                     <button class="btn btn-success" onclick="saveHistory()">💾 Simpan History</button>
                 </div>
@@ -182,8 +242,8 @@
 
             <!-- ===== HISTORY ===== -->
             <div class="dashboard-page" id="historyPage" style="display:none;">
-                <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:16px;">
-                    <h2 style="font-family:'Poppins',sans-serif;color:#2D4A6A;">📜 Riwayat Analisis</h2>
+                <div class="history-header-page">
+                    <h2>📜 Riwayat Analisis</h2>
                     <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
                 </div>
                 <div id="historyList"></div>
@@ -193,5 +253,7 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </body>
 </html>
