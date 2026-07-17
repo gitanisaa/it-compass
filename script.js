@@ -1,13 +1,13 @@
 // ================================================================
 // SUPABASE CONFIG - GANTI PAKE PUNYA KAMU!
 // ================================================================
-const SUPABASE_URL = 'https://cpbducjughurzorqiertz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_';
+const SUPABASE_URL = https://cpbducjughurzorqiertz.supabase.co;
+const SUPABASE_ANON_KEY = sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_;
 
 // ================================================================
 // INISIALISASI SUPABASE
 // ================================================================
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // ================================================================
 // DATA MATA KULIAH (8 Semester) - TOTAL 162 SKS
@@ -253,7 +253,6 @@ async function saveHistory(email, history) {
 // INIT
 // ================================================================
 document.addEventListener('DOMContentLoaded', async function() {
-    // Cek user di localStorage (session sederhana)
     const savedUser = localStorage.getItem('itcompass_user');
     if (savedUser) {
         const user = JSON.parse(savedUser);
@@ -272,7 +271,6 @@ document.addEventListener('DOMContentLoaded', async function() {
     }
     showLogin();
 
-    // Load theme
     if (localStorage.getItem('itcompass_theme') === 'dark') {
         document.body.classList.add('dark');
         document.getElementById('themeToggle').textContent = '☀️';
@@ -280,7 +278,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 });
 
 // ================================================================
-// AUTH - PAKE SUPABASE
+// AUTH
 // ================================================================
 function showLogin() {
     document.querySelectorAll('.auth-page, .dashboard-page').forEach(el => el.style.display = 'none');
@@ -317,7 +315,6 @@ async function register(e) {
     }
 
     try {
-        // Cek email sudah terdaftar
         const existing = await getUserData(email);
         if (existing) {
             showToast('Email sudah terdaftar!', 'error');
@@ -888,7 +885,6 @@ async function processResult() {
     historyData.unshift(historyItem);
     if (historyData.length > 20) historyData.pop();
     
-    // Simpan history ke Supabase
     if (currentUser) {
         await saveHistory(currentUser.email, historyData);
     }
