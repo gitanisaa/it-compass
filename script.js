@@ -180,7 +180,7 @@ async function getUserData(email) {
         .select('*')
         .eq('email', email)
         .single();
-    
+
     if (error && error.code !== 'PGRST116') {
         console.error('Error getUserData:', error);
         return null;
@@ -192,7 +192,7 @@ async function saveUserData(email, data) {
     const { error } = await supabase
         .from('users')
         .upsert({ email, ...data }, { onConflict: 'email' });
-    
+
     if (error) {
         console.error('Error saveUserData:', error);
         throw error;
@@ -205,7 +205,7 @@ async function getNilai(email) {
         .select('*')
         .eq('email', email)
         .single();
-    
+
     if (error && error.code !== 'PGRST116') {
         console.error('Error getNilai:', error);
         return {};
@@ -217,7 +217,7 @@ async function saveNilai(email, nilai) {
     const { error } = await supabase
         .from('nilai')
         .upsert({ email, nilai }, { onConflict: 'email' });
-    
+
     if (error) {
         console.error('Error saveNilai:', error);
         throw error;
@@ -230,7 +230,7 @@ async function getHistory(email) {
         .select('*')
         .eq('email', email)
         .single();
-    
+
     if (error && error.code !== 'PGRST116') {
         console.error('Error getHistory:', error);
         return [];
@@ -238,13 +238,14 @@ async function getHistory(email) {
     return data ? data.history : [];
 }
 
-async function saveHistory(email, history) {
+// Fungsi Supabase untuk simpan history (dipakai internal, dipanggil dari processResult)
+async function persistHistory(email, history) {
     const { error } = await supabase
         .from('history')
         .upsert({ email, history }, { onConflict: 'email' });
-    
+
     if (error) {
-        console.error('Error saveHistory:', error);
+        console.error('Error persistHistory:', error);
         throw error;
     }
 }
@@ -261,7 +262,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             currentUser = userData;
             currentNilai = await getNilai(user.email);
             historyData = await getHistory(user.email);
-            
+
             if (userData.name) {
                 updateProfileUI(userData);
             }
@@ -322,13 +323,13 @@ async function register(e) {
         }
 
         await saveUserData(email, { name, nim, email, password });
-        
+
         currentUser = { name, nim, email };
         localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
-        
+
         showToast('Registrasi berhasil! Lengkapi profilmu 🎉', 'success');
         showSetupProfile();
-        
+
         document.getElementById('setupName').value = name;
         document.getElementById('setupNim').value = nim;
     } catch (error) {
@@ -347,22 +348,22 @@ async function login(e) {
             showToast('Email tidak ditemukan!', 'error');
             return;
         }
-        
+
         if (userData.password !== password) {
             showToast('Password salah!', 'error');
             return;
         }
-        
+
         currentUser = userData;
         localStorage.setItem('itcompass_user', JSON.stringify({ email: userData.email, name: userData.name }));
-        
+
         currentNilai = await getNilai(email);
         historyData = await getHistory(email);
-        
+
         if (userData.name) {
             updateProfileUI(userData);
         }
-        
+
         showToast('Selamat datang, ' + currentUser.name + '! 🎉', 'success');
         showDashboard();
         document.getElementById('loginForm').reset();
@@ -376,7 +377,7 @@ async function login(e) {
 // ================================================================
 async function saveProfileSetup(e) {
     e.preventDefault();
-    
+
     const name = document.getElementById('setupName').value.trim();
     const nim = document.getElementById('setupNim').value.trim();
     const jurusan = document.getElementById('setupJurusan').value.trim();
@@ -389,18 +390,18 @@ async function saveProfileSetup(e) {
 
     try {
         const email = currentUser.email;
-        
-        await saveUserData(email, { 
-            name, 
-            nim, 
+
+        await saveUserData(email, {
+            name,
+            nim,
             email,
             jurusan,
             univ
         });
-        
+
         currentUser = { ...currentUser, name, nim, jurusan, univ };
         localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
-        
+
         const profileData = { name, nim, jurusan, univ };
         updateProfileUI(profileData);
         showToast('Profil berhasil disimpan! 🎉', 'success');
@@ -412,14 +413,14 @@ async function saveProfileSetup(e) {
 
 function updateProfileUI(profile) {
     document.getElementById('userNameDisplay').textContent = profile.name || currentUser.name;
-    
+
     const avatar = document.getElementById('avatarDisplay');
     if (profile.name) {
         avatar.textContent = profile.name.charAt(0).toUpperCase();
     } else {
         avatar.textContent = '👤';
     }
-    
+
     document.getElementById('dropName').textContent = profile.name || '-';
     document.getElementById('dropNim').textContent = profile.nim || '-';
     document.getElementById('dropJurusan').textContent = profile.jurusan || '-';
@@ -448,7 +449,7 @@ function closeDropdown() {
 window.addEventListener('click', function(event) {
     const dropdown = document.getElementById('profileDropdown');
     const avatar = document.getElementById('avatarDisplay');
-    
+
     if (dropdown && dropdown.classList.contains('show')) {
         if (!dropdown.contains(event.target) && event.target !== avatar) {
             dropdown.classList.remove('show');
@@ -822,7 +823,7 @@ async function updateNilai(kode, value) {
     } else {
         delete currentNilai[kode];
     }
-    
+
     if (currentUser) {
         await saveNilai(currentUser.email, currentNilai);
     }
@@ -881,12 +882,12 @@ async function processResult() {
         bidang: topBidang,
         skor: topSkor
     };
-    
+
     historyData.unshift(historyItem);
     if (historyData.length > 20) historyData.pop();
-    
+
     if (currentUser) {
-        await saveHistory(currentUser.email, historyData);
+        await persistHistory(currentUser.email, historyData);
     }
 
     showResult();
@@ -1025,7 +1026,13 @@ function getRecommendations(topBidang, results, empty) {
 // ================================================================
 // HISTORY
 // ================================================================
-function saveHistory() {
+// Sebelumnya fungsi ini bernama saveHistory(), sama persis dengan fungsi
+// Supabase saveHistory(email, history) di atas. Karena JS meng-hoist
+// function declaration dan yang terakhir menang, versi ini selalu menimpa
+// versi Supabase-nya -> history TIDAK PERNAH benar-benar tersimpan ke DB.
+// Sudah di-rename ke confirmSaveHistory() dan tombolnya (di HTML) perlu
+// diupdate: onclick="confirmSaveHistory()"
+function confirmSaveHistory() {
     showToast('History sudah otomatis tersimpan! 💾', 'success');
 }
 
