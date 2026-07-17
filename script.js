@@ -1,22 +1,33 @@
 // ================================================================
-// DATA MATA KULIAH (8 Semester)
+// SUPABASE CONFIG - GANTI PAKE PUNYA KAMU!
+// ================================================================
+const SUPABASE_URL = 'https://cpbducjughurzorqiertz.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_';
+
+// ================================================================
+// INISIALISASI SUPABASE
+// ================================================================
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ================================================================
+// DATA MATA KULIAH (8 Semester) - TOTAL 162 SKS
 // ================================================================
 const SEMESTER_DATA = [{
     name: "Semester 1",
     matkul: [
         { kode: "FS105", name: "Algoritma dan Pemrograman", sks: 3 },
-        { kode: "FS107", name: "Aljabar", sks: 2 },
+        { kode: "FS107", name: "Aljabar Linier", sks: 2 },
         { kode: "UR101", name: "Character Building: Agama", sks: 2 },
         { kode: "UR103", name: "Character Building: Pancasila", sks: 2 },
-        { kode: "FS103", name: "Komputer dan Masyarakat", sks: 2 },
-        { kode: "FS109", name: "Organisasi dan Arsitektur Komputer", sks: 3 },
+        { kode: "FS103", name: "Komputer dan Masyarakat", sks: 3 },
+        { kode: "FS119", name: "Organisasi dan Arsitektur Komputer", sks: 3 },
         { kode: "UR105", name: "Pengantar Teknologi Informasi", sks: 3 },
         { kode: "FS111", name: "Statistika dan Probabilitas", sks: 3 }
     ]
 }, {
     name: "Semester 2",
     matkul: [
-        { kode: "UR102", name: "Character Building: Bahasa Inggris", sks: 3 },
+        { kode: "UR102", name: "Character Building: Bahasa Inggris I", sks: 3 },
         { kode: "UR104", name: "Character Building: Kewarganegaraan", sks: 2 },
         { kode: "FS108", name: "Interaksi Manusia Dan Komputer", sks: 2 },
         { kode: "FS110", name: "Kalkulus", sks: 3 },
@@ -74,7 +85,7 @@ const SEMESTER_DATA = [{
     name: "Semester 7",
     matkul: [
         { kode: "IK404", name: "Big Data", sks: 3 },
-        { kode: "FS403", name: "Cloud Computing", sks: 2 },
+        { kode: "FS404", name: "Cloud Computing", sks: 2 },
         { kode: "FS411", name: "Internet of Things (IOT)", sks: 3 },
         { kode: "UR401", name: "Kuliah Kerja Praktek (KKP)", sks: 3 },
         { kode: "FS313", name: "Mobile Computing", sks: 2 },
@@ -87,8 +98,7 @@ const SEMESTER_DATA = [{
     matkul: [
         { kode: "UR402", name: "Skripsi", sks: 6 },
         { kode: "UR403", name: "Tugas Akhir (Prototipe)", sks: 6 },
-        { kode: "UR404", name: "Tugas Akhir (Proyek)", sks: 6 },
-        { kode: "UR405", name: "Tugas Akhir (Publikasi)", sks: 6 }
+        { kode: "UR404", name: "Tugas Akhir (Proyek)", sks: 6 }
     ]
 }];
 
@@ -162,44 +172,135 @@ let historyData = [];
 let lastResult = null;
 
 // ================================================================
+// FUNGSI SUPABASE
+// ================================================================
+async function getUserData(email) {
+    const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('email', email)
+        .single();
+    
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error getUserData:', error);
+        return null;
+    }
+    return data;
+}
+
+async function saveUserData(email, data) {
+    const { error } = await supabase
+        .from('users')
+        .upsert({ email, ...data }, { onConflict: 'email' });
+    
+    if (error) {
+        console.error('Error saveUserData:', error);
+        throw error;
+    }
+}
+
+async function getNilai(email) {
+    const { data, error } = await supabase
+        .from('nilai')
+        .select('*')
+        .eq('email', email)
+        .single();
+    
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error getNilai:', error);
+        return {};
+    }
+    return data ? data.nilai : {};
+}
+
+async function saveNilai(email, nilai) {
+    const { error } = await supabase
+        .from('nilai')
+        .upsert({ email, nilai }, { onConflict: 'email' });
+    
+    if (error) {
+        console.error('Error saveNilai:', error);
+        throw error;
+    }
+}
+
+async function getHistory(email) {
+    const { data, error } = await supabase
+        .from('history')
+        .select('*')
+        .eq('email', email)
+        .single();
+    
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error getHistory:', error);
+        return [];
+    }
+    return data ? data.history : [];
+}
+
+async function saveHistory(email, history) {
+    const { error } = await supabase
+        .from('history')
+        .upsert({ email, history }, { onConflict: 'email' });
+    
+    if (error) {
+        console.error('Error saveHistory:', error);
+        throw error;
+    }
+}
+
+// ================================================================
 // INIT
 // ================================================================
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    // Cek user di localStorage (session sederhana)
     const savedUser = localStorage.getItem('itcompass_user');
     if (savedUser) {
-        currentUser = JSON.parse(savedUser);
-        const savedNilai = localStorage.getItem('itcompass_nilai_' + currentUser.email);
-        if (savedNilai) currentNilai = JSON.parse(savedNilai);
-        const savedHistory = localStorage.getItem('itcompass_history_' + currentUser.email);
-        if (savedHistory) historyData = JSON.parse(savedHistory);
-        showDashboard();
-    } else {
-        showLogin();
+        const user = JSON.parse(savedUser);
+        const userData = await getUserData(user.email);
+        if (userData) {
+            currentUser = userData;
+            currentNilai = await getNilai(user.email);
+            historyData = await getHistory(user.email);
+            
+            if (userData.name) {
+                updateProfileUI(userData);
+            }
+            showDashboard();
+            return;
+        }
     }
+    showLogin();
 
+    // Load theme
     if (localStorage.getItem('itcompass_theme') === 'dark') {
         document.body.classList.add('dark');
         document.getElementById('themeToggle').textContent = '☀️';
-        document.getElementById('themeToggle').style.background = '#3A5A7A';
-        document.getElementById('themeToggle').style.color = '#D6E6F2';
     }
 });
 
 // ================================================================
-// AUTH
+// AUTH - PAKE SUPABASE
 // ================================================================
 function showLogin() {
     document.querySelectorAll('.auth-page, .dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('loginPage').style.display = 'block';
-    document.getElementById('logoutBtn').classList.add('hidden');
+    closeDropdown();
 }
 
 function showRegister() {
     document.querySelectorAll('.auth-page, .dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('registerPage').style.display = 'block';
+    closeDropdown();
 }
 
-function register(e) {
+function showSetupProfile() {
+    document.querySelectorAll('.auth-page, .dashboard-page').forEach(el => el.style.display = 'none');
+    document.getElementById('setupProfilePage').style.display = 'block';
+    closeDropdown();
+}
+
+async function register(e) {
     e.preventDefault();
     const name = document.getElementById('regName').value.trim();
     const nim = document.getElementById('regNim').value.trim();
@@ -215,61 +316,164 @@ function register(e) {
         return;
     }
 
-    const users = JSON.parse(localStorage.getItem('itcompass_users') || '[]');
-    if (users.find(u => u.email === email)) {
-        showToast('Email sudah terdaftar!', 'error');
-        return;
+    try {
+        // Cek email sudah terdaftar
+        const existing = await getUserData(email);
+        if (existing) {
+            showToast('Email sudah terdaftar!', 'error');
+            return;
+        }
+
+        await saveUserData(email, { name, nim, email, password });
+        
+        currentUser = { name, nim, email };
+        localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
+        
+        showToast('Registrasi berhasil! Lengkapi profilmu 🎉', 'success');
+        showSetupProfile();
+        
+        document.getElementById('setupName').value = name;
+        document.getElementById('setupNim').value = nim;
+    } catch (error) {
+        showToast(error.message || 'Registrasi gagal!', 'error');
     }
-
-    users.push({ name, nim, email, password });
-    localStorage.setItem('itcompass_users', JSON.stringify(users));
-
-    showToast('Registrasi berhasil! Silakan login 🎉', 'success');
-    showLogin();
-    document.getElementById('loginEmail').value = email;
-    document.getElementById('registerForm').reset();
 }
 
-function login(e) {
+async function login(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
 
-    const users = JSON.parse(localStorage.getItem('itcompass_users') || '[]');
-    const user = users.find(u => u.email === email && u.password === password);
+    try {
+        const userData = await getUserData(email);
+        if (!userData) {
+            showToast('Email tidak ditemukan!', 'error');
+            return;
+        }
+        
+        if (userData.password !== password) {
+            showToast('Password salah!', 'error');
+            return;
+        }
+        
+        currentUser = userData;
+        localStorage.setItem('itcompass_user', JSON.stringify({ email: userData.email, name: userData.name }));
+        
+        currentNilai = await getNilai(email);
+        historyData = await getHistory(email);
+        
+        if (userData.name) {
+            updateProfileUI(userData);
+        }
+        
+        showToast('Selamat datang, ' + currentUser.name + '! 🎉', 'success');
+        showDashboard();
+        document.getElementById('loginForm').reset();
+    } catch (error) {
+        showToast('Login gagal!', 'error');
+    }
+}
 
-    if (!user) {
-        showToast('Email atau password salah!', 'error');
+// ================================================================
+// SETUP PROFILE
+// ================================================================
+async function saveProfileSetup(e) {
+    e.preventDefault();
+    
+    const name = document.getElementById('setupName').value.trim();
+    const nim = document.getElementById('setupNim').value.trim();
+    const jurusan = document.getElementById('setupJurusan').value.trim();
+    const univ = document.getElementById('setupUniv').value.trim();
+
+    if (!name || !nim || !jurusan || !univ) {
+        showToast('Semua field harus diisi!', 'error');
         return;
     }
 
-    currentUser = user;
-    localStorage.setItem('itcompass_user', JSON.stringify(user));
-
-    const savedNilai = localStorage.getItem('itcompass_nilai_' + email);
-    if (savedNilai) currentNilai = JSON.parse(savedNilai);
-    else currentNilai = {};
-
-    const savedHistory = localStorage.getItem('itcompass_history_' + email);
-    if (savedHistory) historyData = JSON.parse(savedHistory);
-    else historyData = [];
-
-    showToast('Selamat datang, ' + user.name + '! 🎉', 'success');
-    showDashboard();
-    document.getElementById('loginForm').reset();
+    try {
+        const email = currentUser.email;
+        
+        await saveUserData(email, { 
+            name, 
+            nim, 
+            email,
+            jurusan,
+            univ
+        });
+        
+        currentUser = { ...currentUser, name, nim, jurusan, univ };
+        localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
+        
+        const profileData = { name, nim, jurusan, univ };
+        updateProfileUI(profileData);
+        showToast('Profil berhasil disimpan! 🎉', 'success');
+        showDashboard();
+    } catch (error) {
+        showToast(error.message || 'Gagal menyimpan profil!', 'error');
+    }
 }
 
-function logout() {
-    if (currentUser) {
-        localStorage.setItem('itcompass_nilai_' + currentUser.email, JSON.stringify(currentNilai));
-        localStorage.setItem('itcompass_history_' + currentUser.email, JSON.stringify(historyData));
+function updateProfileUI(profile) {
+    document.getElementById('userNameDisplay').textContent = profile.name || currentUser.name;
+    
+    const avatar = document.getElementById('avatarDisplay');
+    if (profile.name) {
+        avatar.textContent = profile.name.charAt(0).toUpperCase();
+    } else {
+        avatar.textContent = '👤';
     }
-    currentUser = null;
-    currentNilai = {};
-    historyData = [];
-    localStorage.removeItem('itcompass_user');
-    showLogin();
-    showToast('Logout berhasil!', 'info');
+    
+    document.getElementById('dropName').textContent = profile.name || '-';
+    document.getElementById('dropNim').textContent = profile.nim || '-';
+    document.getElementById('dropJurusan').textContent = profile.jurusan || '-';
+    document.getElementById('dropUniv').textContent = profile.univ || '-';
+    document.getElementById('dropEmail').textContent = currentUser.email || '-';
+}
+
+// ================================================================
+// DROPDOWN TOGGLE
+// ================================================================
+function toggleDropdown(event) {
+    event.stopPropagation();
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        dropdown.classList.toggle('show');
+    }
+}
+
+function closeDropdown() {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown) {
+        dropdown.classList.remove('show');
+    }
+}
+
+window.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    const avatar = document.getElementById('avatarDisplay');
+    
+    if (dropdown && dropdown.classList.contains('show')) {
+        if (!dropdown.contains(event.target) && event.target !== avatar) {
+            dropdown.classList.remove('show');
+        }
+    }
+});
+
+// ================================================================
+// LOGOUT
+// ================================================================
+async function logout() {
+    try {
+        currentUser = null;
+        currentNilai = {};
+        historyData = [];
+        localStorage.removeItem('itcompass_user');
+        closeDropdown();
+        showLogin();
+        showToast('Logout berhasil!', 'info');
+    } catch (error) {
+        showToast('Gagal logout!', 'error');
+    }
 }
 
 // ================================================================
@@ -281,10 +485,17 @@ function showDashboard() {
     document.getElementById('inputPage').style.display = 'none';
     document.getElementById('resultPage').style.display = 'none';
     document.getElementById('historyPage').style.display = 'none';
-    document.getElementById('logoutBtn').classList.remove('hidden');
+    closeDropdown();
 
-    document.getElementById('userNameDisplay').textContent = currentUser.name;
-    document.getElementById('avatarDisplay').textContent = currentUser.name.charAt(0).toUpperCase();
+    if (currentUser) {
+        document.getElementById('userNameDisplay').textContent = currentUser.name || 'User';
+        const avatar = document.getElementById('avatarDisplay');
+        if (currentUser.name) {
+            avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+        } else {
+            avatar.textContent = '👤';
+        }
+    }
 
     updateDashboard();
     renderSemesters();
@@ -349,7 +560,7 @@ function updateDashboard() {
         document.getElementById('ipkTrend').className = 'trend';
     }
 
-    document.getElementById('sksTrend').textContent = '📖 ' + totalSKS + ' dari ' + total + ' SKS';
+    document.getElementById('sksTrend').textContent = '📖 ' + totalSKS + ' dari ' + totalSKS + ' SKS';
 
     if (historyData.length > 0) {
         const last = historyData[0];
@@ -606,24 +817,27 @@ function renderSemesters() {
 }
 
 // ================================================================
-// UPDATE NILAI
+// UPDATE NILAI - SAVE KE SUPABASE
 // ================================================================
-function updateNilai(kode, value) {
+async function updateNilai(kode, value) {
     if (value) {
         currentNilai[kode] = value;
     } else {
         delete currentNilai[kode];
     }
-    localStorage.setItem('itcompass_nilai_' + currentUser.email, JSON.stringify(currentNilai));
+    
+    if (currentUser) {
+        await saveNilai(currentUser.email, currentNilai);
+    }
 
     renderSemesters();
     updateDashboard();
 }
 
 // ================================================================
-// PROSES ANALISIS
+// PROSES ANALISIS - SAVE KE SUPABASE
 // ================================================================
-function processResult() {
+async function processResult() {
     const allMatkul = SEMESTER_DATA.flatMap(s => s.matkul);
     const filled = allMatkul.filter(m => currentNilai[m.kode]).length;
     const total = allMatkul.length;
@@ -665,13 +879,19 @@ function processResult() {
 
     lastResult = { topBidang, topSkor, results, empty, filled, total };
 
-    historyData.unshift({
+    const historyItem = {
         date: new Date().toLocaleString('id-ID'),
         bidang: topBidang,
         skor: topSkor
-    });
+    };
+    
+    historyData.unshift(historyItem);
     if (historyData.length > 20) historyData.pop();
-    localStorage.setItem('itcompass_history_' + currentUser.email, JSON.stringify(historyData));
+    
+    // Simpan history ke Supabase
+    if (currentUser) {
+        await saveHistory(currentUser.email, historyData);
+    }
 
     showResult();
     showToast('✅ Analisis selesai!', 'success');
@@ -706,7 +926,7 @@ function showResult() {
         </div>
 
         <div style="margin-bottom:24px;">
-            <h4 style="font-family:'Poppins',sans-serif;font-size:16px;margin-bottom:14px;color:#2D4A6A;">📊 Detail Skor Per Bidang</h4>
+            <h4 style="font-family:'Poppins',sans-serif;font-size:16px;margin-bottom:14px;color:var(--text);">📊 Detail Skor Per Bidang</h4>
     `;
 
     sorted.forEach(([bidang, score]) => {
@@ -742,7 +962,7 @@ function showResult() {
         </div>
 
         <div style="margin-top:16px;">
-            <h4 style="font-family:'Poppins',sans-serif;font-size:15px;margin-bottom:10px;color:#2D4A6A;">📋 Karir Alternatif</h4>
+            <h4 style="font-family:'Poppins',sans-serif;font-size:15px;margin-bottom:10px;color:var(--text);">📋 Karir Alternatif</h4>
             <div class="alternatives">
                 ${sorted.slice(1,5).map(([bidang, score]) => `
                     <div class="alt-item">
@@ -858,13 +1078,9 @@ function toggleTheme() {
 
     if (body.classList.contains('dark')) {
         btn.textContent = '☀️';
-        btn.style.background = '#3A5A7A';
-        btn.style.color = '#D6E6F2';
         localStorage.setItem('itcompass_theme', 'dark');
     } else {
         btn.textContent = '🌙';
-        btn.style.background = '';
-        btn.style.color = '';
         localStorage.setItem('itcompass_theme', 'light');
     }
 }
@@ -885,5 +1101,6 @@ function showToast(message, type = 'info') {
 }
 
 console.log('🧭 IT Compass siap digunakan!');
+console.log('📚 Total SKS: 162');
 console.log('📚 Total Mata Kuliah:', SEMESTER_DATA.flatMap(s => s.matkul).length);
 console.log('🎯 Bidang Karir:', Object.keys(KARIR_MAP).join(', '));
