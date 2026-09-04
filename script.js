@@ -1,8 +1,3 @@
-const SUPABASE_URL = 'https://cpbducjughurzorqiertz.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_pub1ishable_70dsh-vFXsxEQkndtxpkK0bg_RoUFJ_';
-
-const supabase = supabaseJs.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
 const SEMESTER_DATA = [{"name":"Semester 1","matkul":[{"kode":"FS105","name":"Algoritma dan Pemrograman","sks":3},{"kode":"FS107","name":"Aljabar Linier","sks":2},{"kode":"UR101","name":"Character Building: Agama","sks":2},{"kode":"UR103","name":"Character Building: Pancasila","sks":2},{"kode":"FS103","name":"Komputer dan Masyarakat","sks":3},{"kode":"FS119","name":"Organisasi dan Arsitektur Komputer","sks":3},{"kode":"UR105","name":"Pengantar Teknologi Informasi","sks":3},{"kode":"FS111","name":"Statistika dan Probabilitas","sks":3}]},{"name":"Semester 2","matkul":[{"kode":"UR102","name":"Character Building: Bahasa Inggris I","sks":3},{"kode":"UR104","name":"Character Building: Kewarganegaraan","sks":2},{"kode":"FS108","name":"Interaksi Manusia Dan Komputer","sks":2},{"kode":"FS110","name":"Kalkulus","sks":3},{"kode":"FS116","name":"Matematika Diskrit","sks":3},{"kode":"FS112","name":"Pemrograman Berorientasi Objek","sks":3},{"kode":"FS302","name":"Pengantar Kecerdasan Buatan","sks":2},{"kode":"FS106","name":"Teknik Kompilasi","sks":2}]},{"name":"Semester 3","matkul":[{"kode":"FS218","name":"Analisis dan Perancangan Sistem","sks":3},{"kode":"UR201","name":"Character Building: Bahasa Indonesia","sks":2},{"kode":"UR203","name":"Character Building: Bahasa Inggris II","sks":3},{"kode":"FS309","name":"Fisika","sks":2},{"kode":"FS213","name":"Kalkulus Lanjut","sks":2},{"kode":"FS325","name":"Keamanan Teknologi Informasi","sks":2},{"kode":"FS203","name":"Pemrograman I","sks":3},{"kode":"FS207","name":"Sistem Operasi","sks":3}]},{"name":"Semester 4","matkul":[{"kode":"FS308","name":"Bahasa Rakitan","sks":3},{"kode":"FS208","name":"Database Management System (DBMS)","sks":3},{"kode":"UR202","name":"Entrepreneurship","sks":3},{"kode":"FS314","name":"Machine Learning","sks":2},{"kode":"UR206","name":"Metode Penelitian dan Penulisan Ilmiah","sks":3},{"kode":"FS212","name":"Mikroprosesor","sks":3},{"kode":"FS204","name":"Pemrograman II","sks":3}]},{"name":"Semester 5","matkul":[{"kode":"FS331","name":"Jaringan Komputer dan Komunikasi Data","sks":3},{"kode":"FS301","name":"Logika Matematika","sks":2},{"kode":"FS327","name":"Pemrograman Berbasis Web","sks":3},{"kode":"FS305","name":"Pemrograman III","sks":3},{"kode":"FS323","name":"Sistem Digital","sks":3},{"kode":"FS209","name":"Struktur Data","sks":3},{"kode":"FS215","name":"Teknologi Platform","sks":3}]},{"name":"Semester 6","matkul":[{"kode":"FS304","name":"Data Warehouse","sks":3},{"kode":"UR304","name":"Etika Profesi dan Profesional","sks":2},{"kode":"FS312","name":"Expert System","sks":2},{"kode":"IK401","name":"Perawatan Perangkat Lunak","sks":3},{"kode":"FS306","name":"Rekayasa Piranti Lunak","sks":3},{"kode":"IK305","name":"Rekayasa Sistem","sks":3},{"kode":"IK403","name":"Teori Bahasa dan Automata","sks":3}]},{"name":"Semester 7","matkul":[{"kode":"IK404","name":"Big Data","sks":3},{"kode":"FS404","name":"Cloud Computing","sks":2},{"kode":"FS411","name":"Internet of Things (IOT)","sks":3},{"kode":"UR401","name":"Kuliah Kerja Praktek (KKP)","sks":3},{"kode":"FS313","name":"Mobile Computing","sks":2},{"kode":"FS413","name":"Pengolahan Citra Digital","sks":2},{"kode":"FS407","name":"Sistem Cerdas","sks":2},{"kode":"FS409","name":"Sistem Terdistribusi","sks":2}]},{"name":"Semester 8","matkul":[{"kode":"UR402","name":"Skripsi","sks":6},{"kode":"UR403","name":"Tugas Akhir (Prototipe)","sks":6},{"kode":"UR404","name":"Tugas Akhir (Proyek)","sks":6}]}];
 
 const KARIR_MAP = {"Software Engineer":["Algoritma dan Pemrograman","Pemrograman Berorientasi Objek","Pemrograman I","Pemrograman II","Pemrograman III","Struktur Data","Analisis dan Perancangan Sistem","Rekayasa Piranti Lunak","Perawatan Perangkat Lunak","Rekayasa Sistem","Database Management System (DBMS)","Pemrograman Berbasis Web","Teknologi Platform"],"Cyber Security":["Keamanan Teknologi Informasi","Jaringan Komputer dan Komunikasi Data","Sistem Operasi","Organisasi dan Arsitektur Komputer","Teknik Kompilasi","Teori Bahasa dan Automata","Sistem Digital"],"UI/UX Designer":["Interaksi Manusia Dan Komputer","Pengantar Teknologi Informasi","Komputer dan Masyarakat","Entrepreneurship","Metode Penelitian dan Penulisan Ilmiah","Etika Profesi dan Profesional"],"DevOps Engineer":["Cloud Computing","Sistem Terdistribusi","Jaringan Komputer dan Komunikasi Data","Sistem Operasi","Data Warehouse","Big Data","Internet of Things (IOT)","Mobile Computing"],"Data Scientist":["Statistika dan Probabilitas","Matematika Diskrit","Kalkulus","Kalkulus Lanjut","Pengantar Kecerdasan Buatan","Machine Learning","Expert System","Sistem Cerdas","Pengolahan Citra Digital"]};
@@ -17,53 +12,56 @@ let currentNilai = {};
 let historyData = [];
 let lastResult = null;
 
-async function getUserData(email) {
-    const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
-    if (error && error.code !== 'PGRST116') return null;
-    return data;
+// Pelacak status accordion semester yang terbuka
+let openSemesters = { 0: true };
+
+// HELPER LOCAL STORAGE SYSTEM
+function getStoredUsers() {
+    return JSON.parse(localStorage.getItem('itcompass_db_users') || '{}');
 }
-async function saveUserData(email, data) {
-    const { error } = await supabase.from('users').upsert({ email, ...data }, { onConflict: 'email' });
-    if (error) throw error;
+function saveStoredUsers(users) {
+    localStorage.setItem('itcompass_db_users', JSON.stringify(users));
 }
-async function getNilai(email) {
-    const { data, error } = await supabase.from('nilai').select('*').eq('email', email).single();
-    if (error && error.code !== 'PGRST116') return {};
-    return data ? data.nilai : {};
+function getStoredNilai(email) {
+    const all = JSON.parse(localStorage.getItem('itcompass_db_nilai') || '{}');
+    return all[email] || {};
 }
-async function saveNilai(email, nilai) {
-    const { error } = await supabase.from('nilai').upsert({ email, nilai }, { onConflict: 'email' });
-    if (error) throw error;
+function saveStoredNilai(email, nilai) {
+    const all = JSON.parse(localStorage.getItem('itcompass_db_nilai') || '{}');
+    all[email] = nilai;
+    localStorage.setItem('itcompass_db_nilai', JSON.stringify(all));
 }
-async function getHistory(email) {
-    const { data, error } = await supabase.from('history').select('*').eq('email', email).single();
-    if (error && error.code !== 'PGRST116') return [];
-    return data ? data.history : [];
+function getStoredHistory(email) {
+    const all = JSON.parse(localStorage.getItem('itcompass_db_history') || '{}');
+    return all[email] || [];
 }
-async function saveHistory(email, history) {
-    const { error } = await supabase.from('history').upsert({ email, history }, { onConflict: 'email' });
-    if (error) throw error;
+function saveStoredHistory(email, history) {
+    const all = JSON.parse(localStorage.getItem('itcompass_db_history') || '{}');
+    all[email] = history;
+    localStorage.setItem('itcompass_db_history', JSON.stringify(all));
 }
 
-document.addEventListener('DOMContentLoaded', async function() {
-    const savedUser = localStorage.getItem('itcompass_user');
+document.addEventListener('DOMContentLoaded', function() {
+    if (localStorage.getItem('itcompass_theme') === 'dark') {
+        document.body.classList.add('dark');
+        const themeBtn = document.getElementById('themeToggle');
+        if (themeBtn) themeBtn.textContent = '☀️';
+    }
+
+    const savedUser = localStorage.getItem('itcompass_session');
     if (savedUser) {
         const user = JSON.parse(savedUser);
-        const userData = await getUserData(user.email);
-        if (userData) {
-            currentUser = userData;
-            currentNilai = await getNilai(user.email);
-            historyData = await getHistory(user.email);
-            if (userData.name) updateProfileUI(userData);
+        const users = getStoredUsers();
+        if (users[user.email]) {
+            currentUser = users[user.email];
+            currentNilai = getStoredNilai(user.email);
+            historyData = getStoredHistory(user.email);
+            updateProfileUI(currentUser);
             showDashboard();
             return;
         }
     }
     showLogin();
-    if (localStorage.getItem('itcompass_theme') === 'dark') {
-        document.body.classList.add('dark');
-        document.getElementById('themeToggle').textContent = '☀️';
-    }
 });
 
 function showLogin() {
@@ -82,12 +80,13 @@ function showSetupProfile() {
     closeDropdown();
 }
 
-async function register(e) {
+function register(e) {
     e.preventDefault();
     const name = document.getElementById('regName').value.trim();
     const nim = document.getElementById('regNim').value.trim();
     const email = document.getElementById('regEmail').value.trim();
     const password = document.getElementById('regPassword').value;
+
     if (!name || !nim || !email || !password) {
         showToast('Semua field harus diisi!', 'error');
         return;
@@ -96,88 +95,91 @@ async function register(e) {
         showToast('Password minimal 6 karakter!', 'error');
         return;
     }
-    try {
-        const existing = await getUserData(email);
-        if (existing) {
-            showToast('Email sudah terdaftar!', 'error');
-            return;
-        }
-        await saveUserData(email, { name, nim, email, password });
-        currentUser = { name, nim, email };
-        localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
-        showToast('Registrasi berhasil! Lengkapi profilmu 🎉', 'success');
-        showSetupProfile();
-        document.getElementById('setupName').value = name;
-        document.getElementById('setupNim').value = nim;
-    } catch (error) {
-        showToast(error.message || 'Registrasi gagal!', 'error');
+
+    const users = getStoredUsers();
+    if (users[email]) {
+        showToast('Email sudah terdaftar!', 'error');
+        return;
     }
+
+    const newUser = { name, nim, email, password };
+    users[email] = newUser;
+    saveStoredUsers(users);
+
+    currentUser = newUser;
+    localStorage.setItem('itcompass_session', JSON.stringify({ email, name }));
+    showToast('Registrasi berhasil! Lengkapi profilmu 🎉', 'success');
+    showSetupProfile();
+    document.getElementById('setupName').value = name;
+    document.getElementById('setupNim').value = nim;
 }
 
-async function login(e) {
+function login(e) {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
-    try {
-        const userData = await getUserData(email);
-        if (!userData) {
-            showToast('Email tidak ditemukan!', 'error');
-            return;
-        }
-        if (userData.password !== password) {
-            showToast('Password salah!', 'error');
-            return;
-        }
-        currentUser = userData;
-        localStorage.setItem('itcompass_user', JSON.stringify({ email: userData.email, name: userData.name }));
-        currentNilai = await getNilai(email);
-        historyData = await getHistory(email);
-        if (userData.name) updateProfileUI(userData);
-        showToast('Selamat datang, ' + currentUser.name + '! 🎉', 'success');
-        showDashboard();
-        document.getElementById('loginForm').reset();
-    } catch (error) {
-        showToast('Login gagal!', 'error');
+
+    const users = getStoredUsers();
+    const userData = users[email];
+
+    if (!userData) {
+        showToast('Email tidak ditemukan!', 'error');
+        return;
     }
+    if (userData.password !== password) {
+        showToast('Password salah!', 'error');
+        return;
+    }
+
+    currentUser = userData;
+    localStorage.setItem('itcompass_session', JSON.stringify({ email: userData.email, name: userData.name }));
+    currentNilai = getStoredNilai(email);
+    historyData = getStoredHistory(email);
+    
+    updateProfileUI(currentUser);
+    showToast('Selamat datang, ' + currentUser.name + '! 🎉', 'success');
+    showDashboard();
+    document.getElementById('loginForm').reset();
 }
 
-async function saveProfileSetup(e) {
+function saveProfileSetup(e) {
     e.preventDefault();
     const name = document.getElementById('setupName').value.trim();
     const nim = document.getElementById('setupNim').value.trim();
     const jurusan = document.getElementById('setupJurusan').value.trim();
     const univ = document.getElementById('setupUniv').value.trim();
+
     if (!name || !nim || !jurusan || !univ) {
         showToast('Semua field harus diisi!', 'error');
         return;
     }
-    try {
-        const email = currentUser.email;
-        await saveUserData(email, { name, nim, email, jurusan, univ });
-        currentUser = { ...currentUser, name, nim, jurusan, univ };
-        localStorage.setItem('itcompass_user', JSON.stringify({ email, name }));
-        const profileData = { name, nim, jurusan, univ };
-        updateProfileUI(profileData);
-        showToast('Profil berhasil disimpan! 🎉', 'success');
-        showDashboard();
-    } catch (error) {
-        showToast(error.message || 'Gagal menyimpan profil!', 'error');
-    }
+
+    const users = getStoredUsers();
+    const email = currentUser.email;
+
+    const updatedUser = { ...currentUser, name, nim, jurusan, univ };
+    users[email] = updatedUser;
+    saveStoredUsers(users);
+
+    currentUser = updatedUser;
+    localStorage.setItem('itcompass_session', JSON.stringify({ email, name }));
+    updateProfileUI(currentUser);
+    showToast('Profil berhasil disimpan! 🎉', 'success');
+    showDashboard();
 }
 
 function updateProfileUI(profile) {
-    document.getElementById('userNameDisplay').textContent = profile.name || currentUser.name;
+    if (!profile) return;
+    document.getElementById('userNameDisplay').textContent = profile.name || 'User';
     const avatar = document.getElementById('avatarDisplay');
-    if (profile.name) {
-        avatar.textContent = profile.name.charAt(0).toUpperCase();
-    } else {
-        avatar.textContent = '👤';
+    if (avatar) {
+        avatar.textContent = profile.name ? profile.name.charAt(0).toUpperCase() : '👤';
     }
     document.getElementById('dropName').textContent = profile.name || '-';
     document.getElementById('dropNim').textContent = profile.nim || '-';
     document.getElementById('dropJurusan').textContent = profile.jurusan || '-';
     document.getElementById('dropUniv').textContent = profile.univ || '-';
-    document.getElementById('dropEmail').textContent = currentUser.email || '-';
+    document.getElementById('dropEmail').textContent = profile.email || '-';
 }
 
 function toggleDropdown(event) {
@@ -199,53 +201,33 @@ window.addEventListener('click', function(event) {
     }
 });
 
-async function logout() {
-    try {
-        currentUser = null;
-        currentNilai = {};
-        historyData = [];
-        localStorage.removeItem('itcompass_user');
-        closeDropdown();
-        showLogin();
-        showToast('Logout berhasil!', 'info');
-    } catch (error) {
-        showToast('Gagal logout!', 'error');
-    }
+function logout() {
+    currentUser = null;
+    currentNilai = {};
+    historyData = [];
+    localStorage.removeItem('itcompass_session');
+    closeDropdown();
+    showLogin();
+    showToast('Logout berhasil!', 'info');
 }
 
 function showDashboard() {
     document.querySelectorAll('.auth-page, .dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('dashboardPage').style.display = 'block';
-    document.getElementById('inputPage').style.display = 'none';
-    document.getElementById('resultPage').style.display = 'none';
-    document.getElementById('historyPage').style.display = 'none';
     closeDropdown();
-    if (currentUser) {
-        document.getElementById('userNameDisplay').textContent = currentUser.name || 'User';
-        const avatar = document.getElementById('avatarDisplay');
-        if (currentUser.name) {
-            avatar.textContent = currentUser.name.charAt(0).toUpperCase();
-        } else {
-            avatar.textContent = '👤';
-        }
-    }
     updateDashboard();
     renderSemesters();
 }
 
 function goToInput() {
-    document.getElementById('dashboardPage').style.display = 'none';
+    document.querySelectorAll('.dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('inputPage').style.display = 'block';
-    document.getElementById('resultPage').style.display = 'none';
-    document.getElementById('historyPage').style.display = 'none';
     renderSemesters();
 }
 
 function backToDashboard() {
+    document.querySelectorAll('.dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('dashboardPage').style.display = 'block';
-    document.getElementById('inputPage').style.display = 'none';
-    document.getElementById('resultPage').style.display = 'none';
-    document.getElementById('historyPage').style.display = 'none';
     updateDashboard();
 }
 
@@ -253,6 +235,7 @@ function updateDashboard() {
     const allMatkul = SEMESTER_DATA.flatMap(s => s.matkul);
     const filled = allMatkul.filter(m => currentNilai[m.kode]).length;
     let totalBobot = 0, totalSKS = 0, semesterIPKs = [];
+
     SEMESTER_DATA.forEach((sem, idx) => {
         let semBobot = 0, semSKS = 0;
         sem.matkul.forEach(mk => {
@@ -266,10 +249,12 @@ function updateDashboard() {
         });
         semesterIPKs.push({ semester: idx + 1, ipk: semSKS > 0 ? semBobot / semSKS : 0, filled: semSKS > 0 });
     });
+
     const ipk = totalSKS > 0 ? totalBobot / totalSKS : 0;
     document.getElementById('ipkDisplay').textContent = ipk.toFixed(2);
     document.getElementById('sksDisplay').textContent = totalSKS + ' SKS';
     document.getElementById('mkUtamaDisplay').textContent = filled + ' MK';
+
     const lastSem = semesterIPKs.filter(s => s.filled).pop();
     if (lastSem && lastSem.ipk > 0) {
         document.getElementById('ipkTrend').textContent = '📈 IPK ' + lastSem.ipk.toFixed(2);
@@ -278,7 +263,9 @@ function updateDashboard() {
         document.getElementById('ipkTrend').textContent = '⏳ Belum ada data';
         document.getElementById('ipkTrend').className = 'trend';
     }
+
     document.getElementById('sksTrend').textContent = '📖 ' + totalSKS + ' dari ' + totalSKS + ' SKS';
+    
     if (historyData.length > 0) {
         const last = historyData[0];
         document.getElementById('lastAnalysis').textContent = last.bidang;
@@ -287,6 +274,7 @@ function updateDashboard() {
         document.getElementById('lastAnalysis').textContent = '-';
         document.getElementById('lastAnalysisDate').textContent = 'Belum ada analisis';
     }
+
     renderSemesterChart(semesterIPKs);
     renderDonutChart();
     renderHistoryPreview();
@@ -295,6 +283,7 @@ function updateDashboard() {
 
 function renderSemesterChart(semesterIPKs) {
     const container = document.getElementById('semesterChart');
+    if (!container) return;
     container.innerHTML = '';
     const maxIPK = 4.0;
     semesterIPKs.forEach((s) => {
@@ -306,6 +295,7 @@ function renderSemesterChart(semesterIPKs) {
         else if (s.ipk >= 3.0) colorClass = 'primary';
         else if (s.ipk >= 2.5) colorClass = 'orange';
         else if (s.ipk > 0) colorClass = 'pink';
+
         bar.innerHTML = `<div class="value">${s.filled ? s.ipk.toFixed(2) : '-'}</div><div class="bar"><div class="bar-fill ${colorClass}" style="height: ${heightPercent}%;"></div></div><div class="label">Smt ${s.semester}</div>`;
         container.appendChild(bar);
     });
@@ -313,8 +303,10 @@ function renderSemesterChart(semesterIPKs) {
 
 function renderDonutChart() {
     const container = document.getElementById('donutContainer');
+    if (!container) return;
     const allMatkul = SEMESTER_DATA.flatMap(s => s.matkul);
     const results = {};
+
     for (const [bidang, matkuls] of Object.entries(KARIR_MAP)) {
         let totalBobot = 0, count = 0;
         const relevant = allMatkul.filter(m => matkuls.includes(m.name) && currentNilai[m.kode]);
@@ -327,12 +319,14 @@ function renderDonutChart() {
         });
         results[bidang] = count > 0 ? Math.round((totalBobot / count / 4.0) * 100) : 0;
     }
+
     const sorted = Object.entries(results).sort((a, b) => b[1] - a[1]);
     const total = sorted.reduce((sum, [_, v]) => sum + v, 0) || 1;
     const size = 160, strokeWidth = 20, radius = (size - strokeWidth) / 2, circumference = 2 * Math.PI * radius;
-    let html = `<div class="donut-chart"><svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">`;
+    let html = `<div class="donut-chart"><svg width="100%" height="100%" viewBox="0 0 ${size} ${size}" preserveAspectRatio="xMidYMid meet">`;
     let currentOffset = 0;
     const colors = ['#8DB4D6', '#6BB5A0', '#E8A87C', '#D4A0B8', '#D6E6F2'];
+
     sorted.forEach(([bidang, score], idx) => {
         const percent = score / total;
         const dashArray = percent * circumference;
@@ -340,6 +334,7 @@ function renderDonutChart() {
         html += `<circle class="donut-segment" cx="${size/2}" cy="${size/2}" r="${radius}" stroke="${color}" stroke-dasharray="${dashArray} ${circumference - dashArray}" stroke-dashoffset="${-currentOffset}" stroke-linecap="round"/>`;
         currentOffset += dashArray;
     });
+
     html += `</svg><div class="center-text"><div class="big">${total}%</div><div class="small">Total Skor</div></div></div><div class="donut-legend">`;
     sorted.forEach(([bidang, score]) => {
         const color = KARIR_COLORS[bidang] || '#888';
@@ -351,6 +346,7 @@ function renderDonutChart() {
 
 function renderHistoryPreview() {
     const container = document.getElementById('historyPreview');
+    if (!container) return;
     if (historyData.length === 0) {
         container.innerHTML = `<div class="history-empty"><div class="big">📭</div><p>Belum ada riwayat analisis</p></div>`;
         return;
@@ -367,6 +363,8 @@ function renderRecommendation() {
     const title = document.getElementById('recommendTitle');
     const desc = document.getElementById('recommendDesc');
     const details = document.getElementById('recommendDetails');
+    if (!title) return;
+
     if (historyData.length === 0) {
         title.textContent = 'Belum Ada Analisis';
         desc.textContent = 'Silakan input nilai dan analisis karir terlebih dahulu';
@@ -376,6 +374,7 @@ function renderRecommendation() {
     const last = historyData[0];
     title.textContent = `${KARIR_ICON[last.bidang] || '🎯'} ${last.bidang}`;
     desc.textContent = `Skor kecocokan ${last.skor}% - Peluang Tinggi!`;
+
     const allMatkul = SEMESTER_DATA.flatMap(s => s.matkul);
     const filled = allMatkul.filter(m => currentNilai[m.kode]).length;
     const total = allMatkul.length;
@@ -386,39 +385,79 @@ function renderSemesters() {
     const container = document.getElementById('semesterContainer');
     if (!container) return;
     container.innerHTML = '';
+
     SEMESTER_DATA.forEach((sem, semIdx) => {
         const section = document.createElement('div');
         section.className = 'semester-section';
         const totalMatkul = sem.matkul.length;
         const filled = sem.matkul.filter(m => currentNilai[m.kode]).length;
+
         let statusText = '❌ Kosong', statusClass = 'empty';
         if (filled === totalMatkul) { statusText = '✅ Lengkap'; statusClass = 'complete'; }
         else if (filled > 0) { statusText = '⏳ ' + filled + '/' + totalMatkul; statusClass = 'partial'; }
-        let headerHTML = `<div class="semester-header" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.chevron').classList.toggle('open');"><span>📚 ${sem.name}</span><div style="display:flex;align-items:center;gap:12px;"><span class="status-badge ${statusClass}">${statusText}</span><span class="chevron ${semIdx === 0 ? 'open' : ''}">▼</span></div></div>`;
-        let bodyHTML = `<div class="semester-body" style="display:${semIdx === 0 ? 'block' : 'none'};">`;
+
+        const isOpen = !!openSemesters[semIdx];
+
+        let headerHTML = `<div class="semester-header" onclick="toggleSemesterAccordion(${semIdx}, this)">
+            <span>📚 ${sem.name}</span>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <span class="status-badge ${statusClass}">${statusText}</span>
+                <span class="chevron ${isOpen ? 'open' : ''}">▼</span>
+            </div>
+        </div>`;
+        
+        let bodyHTML = `<div class="semester-body" style="display:${isOpen ? 'block' : 'none'};">`;
         sem.matkul.forEach(mk => {
             const value = currentNilai[mk.kode] || '';
-            bodyHTML += `<div class="matkul-row"><span class="name">${mk.name}</span><span class="sks">${mk.sks} SKS</span><select onchange="updateNilai('${mk.kode}', this.value)"><option value="">—</option>${NILAI_LIST.map(n => `<option value="${n}" ${n === value ? 'selected' : ''}>${n}</option>`).join('')}</select><span class="status ${value ? 'filled' : 'empty'}">${value ? '✅' : '⬜'}</span></div>`;
+            bodyHTML += `<div class="matkul-row">
+                <span class="name">${mk.name}</span>
+                <span class="sks">${mk.sks} SKS</span>
+                <select onchange="updateNilai('${mk.kode}', this.value)">
+                    <option value="">—</option>
+                    ${NILAI_LIST.map(n => `<option value="${n}" ${n === value ? 'selected' : ''}>${n}</option>`).join('')}
+                </select>
+                <span class="status ${value ? 'filled' : 'empty'}">${value ? '✅' : '⬜'}</span>
+            </div>`;
         });
         bodyHTML += `</div>`;
+
         section.innerHTML = headerHTML + bodyHTML;
         container.appendChild(section);
     });
 }
 
-async function updateNilai(kode, value) {
+function toggleSemesterAccordion(semIdx, headerEl) {
+    const bodyEl = headerEl.nextElementSibling;
+    const chevronEl = headerEl.querySelector('.chevron');
+    
+    if (bodyEl.style.display === 'none' || !bodyEl.style.display) {
+        bodyEl.style.display = 'block';
+        chevronEl.classList.add('open');
+        openSemesters[semIdx] = true;
+    } else {
+        bodyEl.style.display = 'none';
+        chevronEl.classList.remove('open');
+        openSemesters[semIdx] = false;
+    }
+}
+
+function updateNilai(kode, value) {
     if (value) currentNilai[kode] = value;
     else delete currentNilai[kode];
-    if (currentUser) await saveNilai(currentUser.email, currentNilai);
+
+    if (currentUser) {
+        saveStoredNilai(currentUser.email, currentNilai);
+    }
     renderSemesters();
     updateDashboard();
 }
 
-async function processResult() {
+function processResult() {
     const allMatkul = SEMESTER_DATA.flatMap(s => s.matkul);
     const filled = allMatkul.filter(m => currentNilai[m.kode]).length;
     const total = allMatkul.length;
     const empty = total - filled;
+
     if (filled === 0) {
         showToast('Isi dulu minimal 1 mata kuliah!', 'error');
         return;
@@ -426,6 +465,7 @@ async function processResult() {
     if (empty > 0) {
         if (!window.confirm(`⚠️ Masih ada ${empty} mata kuliah yang belum diisi.\n\nAnalisis tetap bisa dilakukan dengan data yang ada (${filled} matkul),\ntapi hasilnya mungkin kurang akurat.\n\nLanjutkan?`)) return;
     }
+
     const results = {};
     for (const [bidang, matkuls] of Object.entries(KARIR_MAP)) {
         let totalBobot = 0, count = 0;
@@ -439,37 +479,48 @@ async function processResult() {
         });
         results[bidang] = count > 0 ? Math.min(100, Math.round((totalBobot / count / 4.0) * 100)) : 0;
     }
+
     const sorted = Object.entries(results).sort((a, b) => b[1] - a[1]);
     const topBidang = sorted[0][0];
     const topSkor = sorted[0][1];
+
     lastResult = { topBidang, topSkor, results, empty, filled, total };
     const historyItem = { date: new Date().toLocaleString('id-ID'), bidang: topBidang, skor: topSkor };
+
     historyData.unshift(historyItem);
     if (historyData.length > 20) historyData.pop();
-    if (currentUser) await saveHistory(currentUser.email, historyData);
+
+    if (currentUser) {
+        saveStoredHistory(currentUser.email, historyData);
+    }
+
     showResult();
     showToast('✅ Analisis selesai!', 'success');
 }
 
 function showResult() {
-    document.getElementById('dashboardPage').style.display = 'none';
-    document.getElementById('inputPage').style.display = 'none';
+    document.querySelectorAll('.dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('resultPage').style.display = 'block';
-    document.getElementById('historyPage').style.display = 'none';
+
     const container = document.getElementById('resultContent');
     if (!lastResult) { container.innerHTML = '<p>Tidak ada hasil.</p>'; return; }
+
     const { topBidang, topSkor, results, empty, filled, total } = lastResult;
     const sorted = Object.entries(results).sort((a, b) => b[1] - a[1]);
+
     let html = `<div class="result-card"><div class="emoji">${KARIR_ICON[topBidang] || '🎯'}</div><h2>Kamu Cocok Jadi: ${topBidang}</h2><div class="score">${topSkor}%</div><div class="sub">Skor kecocokan tertinggi</div>${empty > 0 ? `<div class="partial-warning">⚠️ Analisis berdasarkan ${filled} dari ${total} mata kuliah (${empty} belum diisi)</div>` : ''}</div><div style="margin-bottom:24px;"><h4 style="font-family:'Poppins',sans-serif;font-size:16px;margin-bottom:14px;color:var(--text);">📊 Detail Skor Per Bidang</h4>`;
+
     sorted.forEach(([bidang, score]) => {
         let cls = 'high';
         if (score === 0) cls = 'zero';
         else if (score < 60) cls = 'low';
         else if (score < 75) cls = 'medium';
+
         const displayScore = score === 0 ? '?' : score + '%';
         const color = KARIR_COLORS[bidang] || '#8DB4D6';
         html += `<div class="skill-bar"><div class="skill-label"><span>${KARIR_ICON[bidang] || '📌'} ${bidang}</span><span>${displayScore}</span></div><div class="bar-track"><div class="bar-fill ${cls}" style="width: ${score}%;background:${color};"></div></div></div>`;
     });
+
     html += `</div><div class="recommendations"><h4>💡 Rekomendasi Pengembangan</h4><ul>${getRecommendations(topBidang, results, empty).map(r => `<li>${r}</li>`).join('')}</ul></div><div style="margin-top:16px;"><h4 style="font-family:'Poppins',sans-serif;font-size:15px;margin-bottom:10px;color:var(--text);">📋 Karir Alternatif</h4><div class="alternatives">${sorted.slice(1,5).map(([bidang, score]) => `<div class="alt-item"><span class="alt-name">${KARIR_ICON[bidang] || '📌'} ${bidang}</span><span class="alt-score ${score === 0 ? 'zero' : ''}">${score === 0 ? '?' : score + '%'}</span></div>`).join('')}</div></div>`;
     container.innerHTML = html;
 }
@@ -491,18 +542,20 @@ function getRecommendations(topBidang, results, empty) {
     return [...(recs[topBidang] || recs["Software Engineer"]), ...extra];
 }
 
-function saveHistory() { showToast('History sudah otomatis tersimpan! 💾', 'success'); }
+function saveHistory() { showToast('History tersimpan di browser! 💾', 'success'); }
 
 function showHistory() {
-    document.getElementById('dashboardPage').style.display = 'none';
-    document.getElementById('inputPage').style.display = 'none';
-    document.getElementById('resultPage').style.display = 'none';
+    document.querySelectorAll('.dashboard-page').forEach(el => el.style.display = 'none');
     document.getElementById('historyPage').style.display = 'block';
+
     const container = document.getElementById('historyList');
+    if (!container) return;
+
     if (historyData.length === 0) {
         container.innerHTML = `<div class="history-empty"><div class="big">📭</div><p>Belum ada history konsultasi</p><p style="font-size:13px;margin-top:6px;">Silakan proses hasil karir dulu!</p></div>`;
         return;
     }
+
     let html = '';
     historyData.forEach(item => {
         html += `<div class="history-item"><div class="h-left"><div class="h-title">${KARIR_ICON[item.bidang] || '📌'} ${item.bidang}</div><div class="h-date">📅 ${item.date}</div></div><div class="h-score">${item.skor}%</div></div>`;
@@ -515,16 +568,17 @@ function toggleTheme() {
     const btn = document.getElementById('themeToggle');
     body.classList.toggle('dark');
     if (body.classList.contains('dark')) {
-        btn.textContent = '☀️';
+        if (btn) btn.textContent = '☀️';
         localStorage.setItem('itcompass_theme', 'dark');
     } else {
-        btn.textContent = '🌙';
+        if (btn) btn.textContent = '🌙';
         localStorage.setItem('itcompass_theme', 'light');
     }
 }
 
 function showToast(message, type = 'info') {
     const toast = document.getElementById('toast');
+    if (!toast) return;
     toast.textContent = message;
     toast.className = 'toast ' + type;
     toast.classList.add('show');
@@ -534,4 +588,4 @@ function showToast(message, type = 'info') {
     }, 4000);
 }
 
-console.log('🧭 IT Compass siap digunakan!');
+console.log('🧭 IT Compass Siap Digunakan!');
