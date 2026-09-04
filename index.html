@@ -25,39 +25,19 @@
                 </div>
                 <div class="header-actions">
                     <button class="btn btn-secondary btn-sm" id="themeToggle" onclick="toggleTheme()">🌙</button>
-                    
                     <div class="profile-dropdown-container">
                         <div class="avatar" id="avatarDisplay" onclick="toggleDropdown(event)">👤</div>
                         <div class="dropdown-menu" id="profileDropdown">
-                            <div class="dropdown-header">
-                                <h4>👤 Profil Saya</h4>
-                            </div>
+                            <div class="dropdown-header"><h4>👤 Profil Saya</h4></div>
                             <ul class="dropdown-info-list">
-                                <li>
-                                    <span class="info-label">Nama</span>
-                                    <span class="info-value" id="dropName">-</span>
-                                </li>
-                                <li>
-                                    <span class="info-label">NIM</span>
-                                    <span class="info-value" id="dropNim">-</span>
-                                </li>
-                                <li>
-                                    <span class="info-label">Jurusan</span>
-                                    <span class="info-value" id="dropJurusan">-</span>
-                                </li>
-                                <li>
-                                    <span class="info-label">Universitas</span>
-                                    <span class="info-value" id="dropUniv">-</span>
-                                </li>
-                                <li>
-                                    <span class="info-label">Email</span>
-                                    <span class="info-value" id="dropEmail">-</span>
-                                </li>
+                                <li><span class="info-label">Nama</span><span class="info-value" id="dropName">-</span></li>
+                                <li><span class="info-label">NIM</span><span class="info-value" id="dropNim">-</span></li>
+                                <li><span class="info-label">Jurusan</span><span class="info-value" id="dropJurusan">-</span></li>
+                                <li><span class="info-label">Universitas</span><span class="info-value" id="dropUniv">-</span></li>
+                                <li><span class="info-label">Email</span><span class="info-value" id="dropEmail">-</span></li>
                             </ul>
                             <div class="dropdown-divider"></div>
-                            <button class="dropdown-logout-btn" onclick="logout()">
-                                🚪 Logout
-                            </button>
+                            <button class="dropdown-logout-btn" onclick="logout()">🚪 Logout</button>
                         </div>
                     </div>
                 </div>
@@ -81,9 +61,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Masuk</button>
                 </form>
-                <div class="auth-switch">
-                    Belum punya akun? <a onclick="showRegister()">Daftar Sekarang ✨</a>
-                </div>
+                <div class="auth-switch">Belum punya akun? <a onclick="showRegister()">Daftar Sekarang ✨</a></div>
             </div>
 
             <!-- ===== REGISTER ===== -->
@@ -112,9 +90,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary btn-block">Daftar Sekarang</button>
                 </form>
-                <div class="auth-switch">
-                    Sudah punya akun? <a onclick="showLogin()">Masuk</a>
-                </div>
+                <div class="auth-switch">Sudah punya akun? <a onclick="showLogin()">Masuk</a></div>
             </div>
 
             <!-- ===== SETUP PROFILE ===== -->
@@ -152,106 +128,44 @@
                     <p>Mari temukan jalur karir IT terbaik untukmu 🚀</p>
                     <span class="badge">📊 Dashboard</span>
                 </div>
-
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="label">📚 IPK Kumulatif</div>
-                        <div class="value primary" id="ipkDisplay">0.00</div>
-                        <div class="trend up" id="ipkTrend">↑ 0.0%</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="label">📖 SKS Lulus</div>
-                        <div class="value green" id="sksDisplay">0 SKS</div>
-                        <div class="trend up" id="sksTrend">↑ 0 SKS</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="label">📋 MK Utama</div>
-                        <div class="value orange" id="mkUtamaDisplay">0 MK</div>
-                        <div class="trend" id="mkTrend">✅ Selesai</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="label">🎯 Analisis Terakhir</div>
-                        <div class="value pink" id="lastAnalysis">-</div>
-                        <div class="trend" id="lastAnalysisDate">Belum ada</div>
-                    </div>
+                    <div class="stat-card"><div class="label">📚 IPK Kumulatif</div><div class="value primary" id="ipkDisplay">0.00</div><div class="trend up" id="ipkTrend">↑ 0.0%</div></div>
+                    <div class="stat-card"><div class="label">📖 SKS Lulus</div><div class="value green" id="sksDisplay">0 SKS</div><div class="trend up" id="sksTrend">↑ 0 SKS</div></div>
+                    <div class="stat-card"><div class="label">📋 MK Utama</div><div class="value orange" id="mkUtamaDisplay">0 MK</div><div class="trend" id="mkTrend">✅ Selesai</div></div>
+                    <div class="stat-card"><div class="label">🎯 Analisis Terakhir</div><div class="value pink" id="lastAnalysis">-</div><div class="trend" id="lastAnalysisDate">Belum ada</div></div>
                 </div>
-
                 <div class="dashboard-grid">
-                    <div class="card-inner">
-                        <div class="chart-title">📈 Perkembangan IPK Semester</div>
-                        <div class="semester-chart" id="semesterChart"></div>
-                    </div>
-
-                    <div class="card-inner">
-                        <div class="chart-title">🎯 Kecenderungan Bidang IT</div>
-                        <div class="donut-container" id="donutContainer"></div>
-                    </div>
-
-                    <div class="card-inner full">
-                        <div class="history-header">
-                            <div class="chart-title" style="margin-bottom:0;">📜 Riwayat Analisis</div>
-                            <button class="btn btn-secondary btn-sm" onclick="showHistory()">Lihat Semua →</button>
-                        </div>
-                        <div class="history-list" id="historyPreview"></div>
-                    </div>
-
-                    <div class="card-inner full" style="padding:0;border:none;">
-                        <div class="recommend-card" id="recommendCard">
-                            <span class="tag">⭐ Rekomendasi Utama</span>
-                            <h3 id="recommendTitle">Belum Ada Analisis</h3>
-                            <p id="recommendDesc">Silakan input nilai dan analisis karir terlebih dahulu</p>
-                            <div class="detail-row" id="recommendDetails"></div>
-                        </div>
-                    </div>
-
-                    <div class="full action-buttons">
-                        <button class="btn btn-primary" onclick="processResult()">
-                            🚀 Analisis Karir
-                        </button>
-                        <button class="btn btn-secondary" onclick="goToInput()">
-                            📝 Input Nilai
-                        </button>
-                    </div>
+                    <div class="card-inner"><div class="chart-title">📈 Perkembangan IPK Semester</div><div class="semester-chart" id="semesterChart"></div></div>
+                    <div class="card-inner"><div class="chart-title">🎯 Kecenderungan Bidang IT</div><div class="donut-container" id="donutContainer"></div></div>
+                    <div class="card-inner full"><div class="history-header"><div class="chart-title" style="margin-bottom:0;">📜 Riwayat Analisis</div><button class="btn btn-secondary btn-sm" onclick="showHistory()">Lihat Semua →</button></div><div class="history-list" id="historyPreview"></div></div>
+                    <div class="card-inner full" style="padding:0;border:none;"><div class="recommend-card" id="recommendCard"><span class="tag">⭐ Rekomendasi Utama</span><h3 id="recommendTitle">Belum Ada Analisis</h3><p id="recommendDesc">Silakan input nilai dan analisis karir terlebih dahulu</p><div class="detail-row" id="recommendDetails"></div></div></div>
+                    <div class="full action-buttons"><button class="btn btn-primary" onclick="processResult()">🚀 Analisis Karir</button><button class="btn btn-secondary" onclick="goToInput()">📝 Input Nilai</button></div>
                 </div>
             </div>
 
             <!-- ===== INPUT NILAI ===== -->
             <div class="dashboard-page" id="inputPage" style="display:none;">
-                <div class="input-header">
-                    <h2>📝 Input Nilai Mata Kuliah</h2>
-                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
-                </div>
+                <div class="input-header"><h2>📝 Input Nilai Mata Kuliah</h2><button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button></div>
                 <div id="semesterContainer"></div>
-                <div class="input-actions">
-                    <button class="btn btn-primary" onclick="processResult()">
-                        🚀 Analisis Karir
-                    </button>
-                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
-                </div>
+                <div class="input-actions"><button class="btn btn-primary" onclick="processResult()">🚀 Analisis Karir</button><button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button></div>
             </div>
 
             <!-- ===== RESULT ===== -->
             <div class="dashboard-page" id="resultPage" style="display:none;">
                 <div id="resultContent"></div>
-                <div class="result-actions">
-                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button>
-                    <button class="btn btn-success" onclick="saveHistory()">💾 Simpan History</button>
-                </div>
+                <div class="result-actions"><button class="btn btn-secondary" onclick="backToDashboard()">← Kembali ke Dashboard</button><button class="btn btn-success" onclick="saveHistory()">💾 Simpan History</button></div>
             </div>
 
             <!-- ===== HISTORY ===== -->
             <div class="dashboard-page" id="historyPage" style="display:none;">
-                <div class="history-header-page">
-                    <h2>📜 Riwayat Analisis</h2>
-                    <button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button>
-                </div>
+                <div class="history-header-page"><h2>📜 Riwayat Analisis</h2><button class="btn btn-secondary" onclick="backToDashboard()">← Kembali</button></div>
                 <div id="historyList"></div>
             </div>
 
         </div>
     </div>
 
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <script src="script.js?v=3"></script>
+    <script src="script.js"></script>
+
 </body>
 </html>
